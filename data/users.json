@@ -1,0 +1,12 @@
+{
+    "users": [
+        {
+            "id": 1,
+            "email": "admin@rajaampat.go.id",
+            "password": "admin123",
+            "role": "admin",
+            "nama": "Administrator",
+            "jabatan": "Pemerintah Kabupaten Raja Ampat"
+        }
+    ]
+}

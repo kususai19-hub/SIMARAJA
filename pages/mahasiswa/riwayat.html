@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Riwayat Pengajuan - SIMARAJA">
+    <title>Riwayat Pengajuan - SIMARAJA</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/animation.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body>
+    <!-- Dashboard Page -->
+    <div class="dashboard-page">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <h1><i class="fas fa-landmark"></i> SIMARAJA</h1>
+            <div class="header-actions">
+                <button class="user-menu-btn" onclick="toggleUserMenu()">
+                    <div class="user-avatar-small" id="header-avatar">A</div>
+                </button>
+            </div>
+        </header>
+
+        <!-- User Dropdown Menu -->
+        <div class="user-dropdown" id="user-dropdown">
+            <div class="dropdown-header">
+                <div class="dropdown-avatar" id="dropdown-avatar">A</div>
+                <div>
+                    <h4 id="dropdown-nama">Nama Mahasiswa</h4>
+                    <p id="dropdown-email">email@example.com</p>
+                </div>
+            </div>
+            <div class="dropdown-menu">
+                <a href="/pages/mahasiswa/profile.html">
+                    <i class="fas fa-user"></i> Profil Saya
+                </a>
+                <a href="#" onclick="confirmLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <section class="dashboard-section">
+                <div class="section-title">
+                    <button class="back-section-btn" onclick="window.location.href='/pages/mahasiswa/dashboard.html'">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h2>Riwayat Pengajuan</h2>
+                </div>
+
+                <div id="riwayat-list" class="riwayat-list">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="/pages/mahasiswa/dashboard.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Beranda</span>
+            </a>
+            <a href="/pages/mahasiswa/pengajuan.html" class="nav-item">
+                <i class="fas fa-plus-circle"></i>
+                <span>Ajukan</span>
+            </a>
+            <a href="/pages/mahasiswa/riwayat.html" class="nav-item active">
+                <i class="fas fa-history"></i>
+                <span>Riwayat</span>
+            </a>
+            <a href="/pages/mahasiswa/profile.html" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>Profil</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+    
+    <!-- Modal -->
+    <div id="modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Konfirmasi</h3>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <p id="modal-message">Apakah Anda yakin?</p>
+            </div>
+            <div class="modal-footer" id="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
+                <button class="btn btn-primary" id="modal-confirm">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="/js/json-handler.js"></script>
+    <script src="/js/script.js"></script>
+    <script src="/js/auth.js"></script>
+    
+    <script>
+        // Check login status
+        let currentUser = null;
+        
+        // Initialize
+        function init() {
+            const userData = localStorage.getItem('simaraja_current_user');
+            if (userData) {
+                currentUser = JSON.parse(userData);
+            }
+            
+            if (!currentUser) {
+                window.location.href = '/pages/auth/login-mahasiswa.html';
+                return;
+            }
+            
+            // Update user info
+            document.getElementById('header-avatar').textContent = currentUser.nama.charAt(0).toUpperCase();
+            document.getElementById('dropdown-avatar').textContent = currentUser.nama.charAt(0).toUpperCase();
+            document.getElementById('dropdown-nama').textContent = currentUser.nama;
+            document.getElementById('dropdown-email').textContent = currentUser.email;
+            
+            // Load riwayat
+            loadRiwayat();
+        }
+        
+        // Load riwayat pengajuan
+        function loadRiwayat() {
+            const container = document.getElementById('riwayat-list');
+            const pengajuanList = JSON.parse(localStorage.getItem('simaraja_pengajuan') || '[]');
+            const userPengajuan = pengajuanList.filter(p => p.userId === currentUser.id);
+            
+            if (userPengajuan.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>Belum ada riwayat pengajuan</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Sort by date (newest first)
+            userPengajuan.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+            
+            container.innerHTML = userPengajuan.map(item => `
+                <div class="riwayat-card" id="riwayat-${item.id}">
+                    <div class="riwayat-header" onclick="toggleRiwayat(${item.id})">
+                        <div class="riwayat-info-main">
+                            <span class="riwayat-date">${formatDate(item.tanggal)}</span>
+                            <span class="riwayat-amount">${formatCurrency(item.dana)}</span>
+                        </div>
+                        <div class="riwayat-toggle">
+                            <span class="status-badge status-${item.status}">
+                                <i class="fas fa-${getStatusIcon(item.status)}"></i>
+                                ${capitalizeFirst(item.status)}
+                            </span>
+                            <i class="fas fa-chevron-down"></i>
+                        </div>
+                    </div>
+                    <div class="riwayat-detail">
+                        <div class="riwayat-detail-grid">
+                            <div class="riwayat-detail-item">
+                                <span>IPK</span>
+                                <strong>${item.ipk.toFixed(2)}</strong>
+                            </div>
+                            <div class="riwayat-detail-item">
+                                <span>Semester</span>
+                                <strong>${item.semester}</strong>
+                            </div>
+                            <div class="riwayat-detail-item" style="grid-column: 1 / -1;">
+                                <span>Keperluan</span>
+                                <strong>${item.keperluan}</strong>
+                            </div>
+                        </div>
+                        
+                        ${item.dokumen ? `
+                        <div class="riwayat-docs">
+                            <div class="riwayat-docs-title">Dokumen Pendukung:</div>
+                            <div class="riwayat-doc-list">
+                                <div class="doc-badge">
+                                    <i class="fas fa-file-pdf"></i>
+                                    ${item.dokumen.proposal?.name || 'Proposal'}
+                                </div>
+                                <div class="doc-badge">
+                                    <i class="fas fa-file-pdf"></i>
+                                    ${item.dokumen.transkrip?.name || 'Transkrip'}
+                                </div>
+                                <div class="doc-badge">
+                                    <i class="fas fa-file-pdf"></i>
+                                    ${item.dokumen.ktm?.name || 'KTM/KTP'}
+                                </div>
+                            </div>
+                        </div>
+                        ` : ''}
+                        
+                        ${item.catatan ? `
+                        <div class="riwayat-catatan">
+                            <strong>Catatan:</strong> ${item.catatan}
+                        </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        // Toggle riwayat card
+        function toggleRiwayat(id) {
+            const card = document.getElementById('riwayat-' + id);
+            card.classList.toggle('expanded');
+        }
+        
+        // Format currency
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('id-ID', {
+                style: 'currency',
+                currency: 'IDR',
+                minimumFractionDigits: 0
+            }).format(amount);
+        }
+        
+        // Format date
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('id-ID', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+        }
+        
+        // Capitalize first letter
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+        
+        // Get status icon
+        function getStatusIcon(status) {
+            const icons = {
+                'pending': 'clock',
+                'diproses': 'spinner',
+                'disetujui': 'check-circle',
+                'ditolak': 'times-circle'
+            };
+            return icons[status] || 'circle';
+        }
+        
+        // User menu toggle
+        function toggleUserMenu() {
+            document.getElementById('user-dropdown').classList.toggle('active');
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.user-menu-btn') && !e.target.closest('.user-dropdown')) {
+                document.getElementById('user-dropdown').classList.remove('active');
+            }
+        });
+        
+        // Logout
+        function confirmLogout() {
+            showModal('Konfirmasi Keluar', 'Apakah Anda yakin ingin keluar dari akun?', function() {
+                localStorage.removeItem('simaraja_current_user');
+                window.location.href = '/';
+            });
+        }
+        
+        // Modal functions
+        function showModal(title, message, onConfirm) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').textContent = message;
+            document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('modal-confirm').onclick = onConfirm;
+        }
+        
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>

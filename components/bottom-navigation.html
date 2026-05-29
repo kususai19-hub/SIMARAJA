@@ -1,0 +1,135 @@
+<!-- ===============================================
+   SIMARAJA - Bottom Navigation Component
+   Komponen navigasi bawah untuk mobile
+   =============================================== -->
+
+<nav class="bottom-nav" id="bottom-nav">
+    <a href="#" class="nav-item active" data-section="beranda">
+        <i class="fas fa-home"></i>
+        <span>Beranda</span>
+    </a>
+    <a href="#" class="nav-item" data-section="ajukan">
+        <i class="fas fa-plus-circle"></i>
+        <span>Ajukan</span>
+    </a>
+    <a href="#" class="nav-item" data-section="riwayat">
+        <i class="fas fa-history"></i>
+        <span>Riwayat</span>
+    </a>
+    <a href="#" class="nav-item" data-section="profil">
+        <i class="fas fa-user"></i>
+        <span>Profil</span>
+    </a>
+</nav>
+
+<!-- Bottom Navigation Styles -->
+<style>
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 70px;
+    background: var(--white);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottom-nav.admin-nav {
+    background: var(--gray-800);
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem 1rem;
+    color: var(--gray-400);
+    font-size: 0.7rem;
+    text-decoration: none;
+    transition: var(--transition);
+}
+
+.admin-nav .nav-item {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.nav-item i {
+    font-size: 1.25rem;
+}
+
+.nav-item.active {
+    color: var(--primary);
+}
+
+.admin-nav .nav-item.active {
+    color: var(--primary-light);
+}
+
+.nav-item:hover {
+    color: var(--primary);
+}
+
+.admin-nav .nav-item:hover {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Responsive */
+@media (min-width: 640px) {
+    .admin-nav {
+        justify-content: center;
+        gap: 3rem;
+    }
+}
+
+@media (min-width: 768px) {
+    .bottom-nav {
+        height: 65px;
+    }
+    
+    .nav-item {
+        font-size: 0.75rem;
+        padding: 0.75rem 1.5rem;
+    }
+    
+    .nav-item i {
+        font-size: 1.35rem;
+    }
+}
+
+/* Hide on Desktop - Show Sidebar instead */
+@media (min-width: 1024px) {
+    .bottom-nav {
+        display: none;
+    }
+}
+</style>
+
+<!-- Bottom Navigation Script -->
+<script>
+// Handle navigation item click
+document.querySelectorAll('.nav-item').forEach(item => {
+    item.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Remove active class from all items
+        document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+        
+        // Add active class to clicked item
+        this.classList.add('active');
+        
+        // Get section name
+        const section = this.dataset.section;
+        
+        // Navigate to section (implement your navigation logic)
+        if (typeof showSection === 'function') {
+            showSection(section);
+        }
+    });
+});
+</script>

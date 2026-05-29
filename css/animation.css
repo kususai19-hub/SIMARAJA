@@ -1,0 +1,302 @@
+/* ===============================================
+   SIMARAJA - Animations
+   Animation styles for the application
+   =============================================== */
+
+/* ===============================================
+   KEYFRAME ANIMATIONS
+   =============================================== */
+
+/* Pulse Animation - for splash logo */
+@keyframes pulse {
+    0%, 100% { 
+        transform: scale(1); 
+    }
+    50% { 
+        transform: scale(1.05); 
+    }
+}
+
+/* Loading Animation - for splash screen loader */
+@keyframes loading {
+    0% { 
+        width: 0%; 
+    }
+    100% { 
+        width: 100%; 
+    }
+}
+
+/* Fade In Animation - for sections and cards */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Fade In Up Animation - for modal */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Scale In Animation - for modal */
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Slide In Right Animation */
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Slide In Left Animation */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Bounce Animation */
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+/* Shake Animation - for errors */
+@keyframes shake {
+    0%, 100% {
+        transform: translateX(0);
+    }
+    10%, 30%, 50%, 70%, 90% {
+        transform: translateX(-5px);
+    }
+    20%, 40%, 60%, 80% {
+        transform: translateX(5px);
+    }
+}
+
+/* Spin Animation - for loading spinners */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Float Animation - for decorative elements */
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+/* Glow Animation - for highlights */
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 0 5px rgba(13, 148, 136, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(13, 148, 136, 0.8);
+    }
+}
+
+/* ===============================================
+   ANIMATION CLASSES
+   =============================================== */
+
+/* Fade In */
+.animate-fadeIn {
+    animation: fadeIn 0.3s ease;
+}
+
+/* Fade In Up */
+.animate-fadeInUp {
+    animation: fadeInUp 0.4s ease;
+}
+
+/* Scale In */
+.animate-scaleIn {
+    animation: scaleIn 0.3s ease;
+}
+
+/* Slide In Right */
+.animate-slideRight {
+    animation: slideInRight 0.3s ease;
+}
+
+/* Slide In Left */
+.animate-slideLeft {
+    animation: slideInLeft 0.3s ease;
+}
+
+/* Bounce */
+.animate-bounce {
+    animation: bounce 2s ease-in-out infinite;
+}
+
+/* Shake - for errors */
+.animate-shake {
+    animation: shake 0.5s ease;
+}
+
+/* Spin - for loading */
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+/* Float */
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+/* Glow */
+.animate-glow {
+    animation: glow 2s ease-in-out infinite;
+}
+
+/* ===============================================
+   HOVER TRANSITIONS
+   =============================================== */
+
+/* Button Hover Effect */
+.btn {
+    transition: all 0.3s ease;
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+/* Card Hover Effect */
+.card-hover {
+    transition: all 0.3s ease;
+}
+
+.card-hover:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* Link Hover Effect */
+a {
+    transition: color 0.3s ease;
+}
+
+/* Input Focus Effect */
+input, textarea, select {
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* ===============================================
+   TRANSITION UTILITIES
+   =============================================== */
+
+.transition-fast {
+    transition: all 0.15s ease;
+}
+
+.transition-normal {
+    transition: all 0.3s ease;
+}
+
+.transition-slow {
+    transition: all 0.5s ease;
+}
+
+/* ===============================================
+   SPLASH SCREEN ANIMATION
+   =============================================== */
+.splash-logo {
+    animation: pulse 2s infinite;
+}
+
+.loader-bar {
+    animation: loading 2s ease-out forwards;
+}
+
+/* ===============================================
+   DASHBOARD SECTION ANIMATION
+   =============================================== */
+.dashboard-section {
+    animation: fadeIn 0.3s ease;
+}
+
+/* ===============================================
+   MODAL ANIMATION
+   =============================================== */
+.modal-content {
+    animation: scaleIn 0.3s ease;
+}
+
+/* ===============================================
+   TOAST ANIMATION
+   =============================================== */
+.toast {
+    animation: fadeInUp 0.3s ease;
+}
+
+.toast.hiding {
+    animation: fadeInUp 0.3s ease reverse;
+}
+
+/* ===============================================
+   DROPDOWN ANIMATION
+   =============================================== */
+.user-dropdown {
+    animation: fadeIn 0.2s ease;
+}
+
+/* ===============================================
+   CARD EXPAND ANIMATION
+   =============================================== */
+.riwayat-toggle i,
+.pengajuan-meta i,
+.toggle-icon {
+    transition: transform 0.3s ease;
+}
+
+.riwayat-card.expanded .riwayat-toggle i,
+.pengajuan-card.expanded .pengajuan-meta i,
+.mahasiswa-card.expanded .toggle-icon {
+    transform: rotate(180deg);
+}

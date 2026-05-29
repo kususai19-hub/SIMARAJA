@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="SIMARAJA - Sistem Informasi Manajemen Pelayanan Bantuan Studi Akhir Bagi Mahasiswa Asal Raja Ampat">
+    <meta name="keywords" content="SIMARAJA, Raja Ampat, Bantuan Studi, Mahasiswa, Pemerintah">
+    <meta name="author" content="Pemerintah Kabupaten Raja Ampat">
+    
+    <title>SIMARAJA - Sistem Informasi Manajemen Pelayanan Bantuan Studi Akhir</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/dashboard.css">
+    <link rel="stylesheet" href="./css/animation.css">
+    <link rel="stylesheet" href="./css/responsive.css">
+</head>
+<body>
+    <!-- ===============================================
+         SPLASH SCREEN
+         =============================================== -->
+    <div id="splash-screen" class="splash-screen">
+        <div class="splash-content">
+            <div class="splash-logo">
+                <i class="fas fa-landmark"></i>
+            </div>
+            <h1 class="splash-title">SIMARAJA</h1>
+            <p class="splash-subtitle">Sistem Informasi Manajemen Pelayanan Bantuan Studi Akhir</p>
+            <div class="splash-loader">
+                <div class="loader-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===============================================
+         APP CONTAINER
+         =============================================== -->
+    <div id="app" class="app-container hidden">
+        
+        <!-- ===============================================
+             LANDING PAGE
+             =============================================== -->
+        <div id="page-landing" class="page landing-page">
+            <!-- Hero Background Image -->
+            <div class="hero-bg-image">
+                <img src="./assets/images/hero-bg.png" alt="Mahasiswa Raja Ampat" class="hero-img">
+                <div class="hero-overlay"></div>
+            </div>
+            
+            <!-- Main Content -->
+            <div class="landing-content-wrapper">
+                <div class="landing-logo">
+                    <i class="fas fa-landmark"></i>
+                </div>
+                <h1 class="landing-title">SIMARAJA</h1>
+                <p class="landing-subtitle">Sistem Informasi Manajemen Pelayanan Bantuan Studi Akhir</p>
+                <p class="landing-tagline">Kabupaten Raja Ampat</p>
+                <p class="landing-description">
+                    Program bantuan pendidikan untuk mahasiswa berprestasi asal Raja Ampat. 
+                    Wujudkan impian menyelesaikan studi bersama kami.
+                </p>
+                <div class="landing-buttons">
+                    <button class="btn btn-primary-solid" onclick="showLoginPage('mahasiswa')">
+                        <i class="fas fa-user-graduate"></i>
+                        Masuk sebagai Mahasiswa
+                    </button>
+                    <button class="btn btn-primary-outline" onclick="showLoginPage('admin')">
+                        <i class="fas fa-building-columns"></i>
+                        Masuk sebagai Pemerintah
+                    </button>
+                </div>
+                <p class="landing-register">
+                    Belum punya akun? <a href="#" onclick="showRegisterPage()">Daftar Sekarang</a>
+                </p>
+            </div>
+            
+            <!-- Footer -->
+            <div class="landing-footer">
+                <p>&copy; 2024 Pemerintah Kabupaten Raja Ampat</p>
+            </div>
+        </div>
+
+        <!-- ===============================================
+             LOGIN PAGE
+             =============================================== -->
+        <div id="page-login" class="page login-page hidden">
+            <div class="auth-container">
+                <button class="back-btn" onclick="showLanding()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="auth-header">
+                    <div class="auth-icon" id="login-icon">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <h2>Masuk Akun</h2>
+                    <p id="login-type-text">Masuk sebagai Mahasiswa</p>
+                </div>
+                <form id="login-form" class="auth-form" onsubmit="handleLogin(event)">
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="login-email" placeholder="Email" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="login-password" placeholder="Password" required>
+                        <button type="button" class="toggle-password" onclick="togglePassword('login-password')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="forgot-password-link">
+                        <a href="#" onclick="showForgotPassword()">Lupa Password?</a>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <i class="fas fa-sign-in-alt"></i> Masuk
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- ===============================================
+             FORGOT PASSWORD PAGE
+             =============================================== -->
+        <div id="page-forgot-password" class="page login-page hidden">
+            <div class="auth-container">
+                <button class="back-btn" onclick="showLoginPage('mahasiswa')">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="auth-header">
+                    <div class="auth-icon forgot-icon">
+                        <i class="fas fa-key"></i>
+                    </div>
+                    <h2>Lupa Password</h2>
+                    <p>Masukkan email untuk reset password</p>
+                </div>
+                <form id="forgot-form" class="auth-form" onsubmit="handleForgotPassword(event)">
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="forgot-email" placeholder="Email Terdaftar" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <i class="fas fa-paper-plane"></i> Kirim Link Reset
+                    </button>
+                </form>
+                <p class="auth-footer">
+                    Ingat password? <a href="#" onclick="showLoginPage('mahasiswa')">Masuk</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- ===============================================
+             REGISTER PAGE
+             =============================================== -->
+        <div id="page-register" class="page register-page hidden">
+            <div class="auth-container auth-container-wide">
+                <button class="back-btn" onclick="showLanding()">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="auth-header">
+                    <div class="auth-icon">
+                        <i class="fas fa-user-plus"></i>
+                    </div>
+                    <h2>Daftar Akun Baru</h2>
+                    <p>Daftarkan diri Anda untuk mengajukan bantuan</p>
+                </div>
+                <form id="register-form" class="auth-form" onsubmit="handleRegister(event)">
+                    <div class="form-row">
+                        <div class="input-group">
+                            <i class="fas fa-user"></i>
+                            <input type="text" id="reg-nama" placeholder="Nama Lengkap" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-envelope"></i>
+                            <input type="email" id="reg-email" placeholder="Email" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="input-group">
+                            <i class="fas fa-id-card"></i>
+                            <input type="text" id="reg-nim" placeholder="NIM" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-graduation-cap"></i>
+                            <input type="text" id="reg-jurusan" placeholder="Jurusan" required>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="input-group">
+                            <i class="fas fa-university"></i>
+                            <input type="text" id="reg-universitas" placeholder="Universitas" required>
+                        </div>
+                        <div class="input-group">
+                            <i class="fas fa-phone"></i>
+                            <input type="tel" id="reg-hp" placeholder="No. HP" required>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <input type="text" id="reg-alamat" placeholder="Alamat di Raja Ampat" required>
+                    </div>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="reg-password" placeholder="Password (min. 6 karakter)" required minlength="6">
+                        <button type="button" class="toggle-password" onclick="togglePassword('reg-password')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">
+                        <i class="fas fa-user-plus"></i> Daftar
+                    </button>
+                </form>
+                <p class="auth-footer">
+                    Sudah punya akun? <a href="#" onclick="showLoginPage('mahasiswa')">Masuk</a>
+                </p>
+            </div>
+        </div>
+
+        <!-- ===============================================
+             MAHASISWA DASHBOARD
+             =============================================== -->
+        <div id="page-mahasiswa" class="page dashboard-page hidden">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <h1><i class="fas fa-landmark"></i> SIMARAJA</h1>
+                <div class="header-actions">
+                    <button class="notif-btn" onclick="showNotifModal()">
+                        <i class="fas fa-bell"></i>
+                        <span class="notif-badge" id="mhs-notif-badge">0</span>
+                    </button>
+                    <button class="user-menu-btn" onclick="toggleUserMenu()">
+                        <div class="user-avatar-small" id="header-avatar">A</div>
+                    </button>
+                </div>
+            </header>
+
+            <!-- User Dropdown Menu -->
+            <div class="user-dropdown" id="user-dropdown">
+                <div class="dropdown-header">
+                    <div class="dropdown-avatar" id="dropdown-avatar">A</div>
+                    <div>
+                        <h4 id="dropdown-nama">Nama Mahasiswa</h4>
+                        <p id="dropdown-email">email@example.com</p>
+                    </div>
+                </div>
+                <div class="dropdown-menu">
+                    <a href="#" onclick="showMahasiswaSection('profil')">
+                        <i class="fas fa-user"></i> Profil Saya
+                    </a>
+                    <a href="#" onclick="confirmLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Keluar
+                    </a>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <main class="dashboard-main">
+                <!-- Beranda Section -->
+                <section id="mhs-beranda" class="dashboard-section">
+                    <div class="welcome-banner">
+                        <div class="welcome-content">
+                            <h2>Selamat Datang,</h2>
+                            <h3 id="welcome-nama">Nama Mahasiswa</h3>
+                            <p>Ajukan bantuan studi akhir Anda dengan mudah</p>
+                        </div>
+                        <div class="welcome-illustration">
+                            <i class="fas fa-graduation-cap"></i>
+                        </div>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="stats-row">
+                        <div class="stat-card-mini pending">
+                            <i class="fas fa-clock"></i>
+                            <div class="stat-info">
+                                <span class="stat-num" id="mhs-pending">0</span>
+                                <span class="stat-text">Pending</span>
+                            </div>
+                        </div>
+                        <div class="stat-card-mini diproses">
+                            <i class="fas fa-spinner"></i>
+                            <div class="stat-info">
+                                <span class="stat-num" id="mhs-diproses">0</span>
+                                <span class="stat-text">Diproses</span>
+                            </div>
+                        </div>
+                        <div class="stat-card-mini disetujui">
+                            <i class="fas fa-check-circle"></i>
+                            <div class="stat-info">
+                                <span class="stat-num" id="mhs-disetujui">0</span>
+                                <span class="stat-text">Disetujui</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quick Action Card -->
+                    <div class="action-card" onclick="showMahasiswaSection('ajukan')">
+                        <div class="action-icon">
+                            <i class="fas fa-plus-circle"></i>
+                        </div>
+                        <div class="action-content">
+                            <h3>Ajukan Bantuan Baru</h3>
+                            <p>Klik untuk membuat pengajuan bantuan studi akhir</p>
+                        </div>
+                        <i class="fas fa-chevron-right action-arrow"></i>
+                    </div>
+
+                    <!-- Info Section -->
+                    <div class="info-section">
+                        <h3><i class="fas fa-info-circle"></i> Syarat Pengajuan</h3>
+                        <div class="requirement-list">
+                            <div class="requirement-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>IPK minimal 3.50</span>
+                            </div>
+                            <div class="requirement-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Semester minimal 4</span>
+                            </div>
+                            <div class="requirement-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Mahasiswa aktif</span>
+                            </div>
+                            <div class="requirement-item">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Asal Raja Ampat</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Dokumen Required -->
+                    <div class="info-section">
+                        <h3><i class="fas fa-file-alt"></i> Dokumen Diperlukan</h3>
+                        <div class="doc-requirements">
+                            <div class="doc-req-item">
+                                <i class="fas fa-file-pdf"></i>
+                                <span>Proposal Pengajuan (PDF)</span>
+                            </div>
+                            <div class="doc-req-item">
+                                <i class="fas fa-file-pdf"></i>
+                                <span>Transkrip Nilai (PDF)</span>
+                            </div>
+                            <div class="doc-req-item">
+                                <i class="fas fa-file-pdf"></i>
+                                <span>KTM / KTP (PDF)</span>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Ajukan Section -->
+                <section id="mhs-ajukan" class="dashboard-section hidden">
+                    <div class="section-title">
+                        <button class="back-section-btn" onclick="showMahasiswaSection('beranda')">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <h2>Form Pengajuan Bantuan</h2>
+                    </div>
+
+                    <form id="form-pengajuan" class="form-container" onsubmit="handlePengajuan(event)">
+                        <!-- Data Mahasiswa -->
+                        <div class="form-card">
+                            <h3 class="form-card-title">
+                                <i class="fas fa-user"></i> Data Mahasiswa
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>Nama Lengkap</label>
+                                    <input type="text" id="peng-nama" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>NIM</label>
+                                    <input type="text" id="peng-nim" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Jurusan</label>
+                                    <input type="text" id="peng-jurusan" readonly>
+                                </div>
+                                <div class="form-group">
+                                    <label>Universitas</label>
+                                    <input type="text" id="peng-universitas" readonly>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Data Pengajuan -->
+                        <div class="form-card">
+                            <h3 class="form-card-title">
+                                <i class="fas fa-file-alt"></i> Data Pengajuan
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    <label>IPK <span class="text-muted">(min. 3.50)</span></label>
+                                    <input type="number" id="peng-ipk" step="0.01" min="0" max="4" placeholder="Contoh: 3.75" required>
+                                </div>
+                                <div class="form-group">
+                                    <label>Semester <span class="text-muted">(min. 4)</span></label>
+                                    <input type="number" id="peng-semester" min="1" max="14" placeholder="Contoh: 6" required>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Jumlah Dana yang Diajukan</label>
+                                    <input type="number" id="peng-dana" min="100000" placeholder="Contoh: 15000000" required>
+                                </div>
+                                <div class="form-group full-width">
+                                    <label>Keperluan Dana</label>
+                                    <textarea id="peng-keperluan" rows="3" placeholder="Jelaskan keperluan dana (min. 20 karakter)" required minlength="20"></textarea>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Upload Dokumen -->
+                        <div class="form-card">
+                            <h3 class="form-card-title">
+                                <i class="fas fa-upload"></i> Upload Dokumen
+                            </h3>
+                            <p class="form-card-desc">Upload dokumen pendukung dalam format PDF (max. 5MB per file)</p>
+                            
+                            <div class="upload-grid">
+                                <div class="upload-item">
+                                    <label>Proposal Pengajuan <span class="required">*</span></label>
+                                    <div class="upload-box" id="upload-proposal" onclick="document.getElementById('file-proposal').click()">
+                                        <input type="file" id="file-proposal" accept=".pdf" onchange="handleFileUpload(this, 'proposal')" hidden>
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <span class="upload-text">Klik untuk upload</span>
+                                        <span class="upload-filename" id="filename-proposal"></span>
+                                    </div>
+                                </div>
+
+                                <div class="upload-item">
+                                    <label>Transkrip Nilai <span class="required">*</span></label>
+                                    <div class="upload-box" id="upload-transkrip" onclick="document.getElementById('file-transkrip').click()">
+                                        <input type="file" id="file-transkrip" accept=".pdf" onchange="handleFileUpload(this, 'transkrip')" hidden>
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <span class="upload-text">Klik untuk upload</span>
+                                        <span class="upload-filename" id="filename-transkrip"></span>
+                                    </div>
+                                </div>
+
+                                <div class="upload-item">
+                                    <label>KTM / KTP <span class="required">*</span></label>
+                                    <div class="upload-box" id="upload-ktm" onclick="document.getElementById('file-ktm').click()">
+                                        <input type="file" id="file-ktm" accept=".pdf" onchange="handleFileUpload(this, 'ktm')" hidden>
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <span class="upload-text">Klik untuk upload</span>
+                                        <span class="upload-filename" id="filename-ktm"></span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary btn-full btn-submit">
+                            <i class="fas fa-paper-plane"></i> Kirim Pengajuan
+                        </button>
+                    </form>
+                </section>
+
+                <!-- Riwayat Section -->
+                <section id="mhs-riwayat" class="dashboard-section hidden">
+                    <div class="section-title">
+                        <button class="back-section-btn" onclick="showMahasiswaSection('beranda')">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <h2>Riwayat Pengajuan</h2>
+                    </div>
+
+                    <div id="riwayat-list" class="riwayat-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </section>
+
+                <!-- Profil Section -->
+                <section id="mhs-profil" class="dashboard-section hidden">
+                    <div class="section-title">
+                        <button class="back-section-btn" onclick="showMahasiswaSection('beranda')">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <h2>Profil Saya</h2>
+                    </div>
+
+                    <div class="profile-container">
+                        <div class="profile-header-card">
+                            <div class="profile-avatar-large" id="profile-avatar">A</div>
+                            <h3 id="profile-nama">Nama Mahasiswa</h3>
+                            <p id="profile-email">email@example.com</p>
+                        </div>
+
+                        <div class="profile-details-card">
+                            <div class="profile-detail-item">
+                                <i class="fas fa-id-card"></i>
+                                <div>
+                                    <span class="label">NIM</span>
+                                    <span class="value" id="profile-nim">-</span>
+                                </div>
+                            </div>
+                            <div class="profile-detail-item">
+                                <i class="fas fa-graduation-cap"></i>
+                                <div>
+                                    <span class="label">Jurusan</span>
+                                    <span class="value" id="profile-jurusan">-</span>
+                                </div>
+                            </div>
+                            <div class="profile-detail-item">
+                                <i class="fas fa-university"></i>
+                                <div>
+                                    <span class="label">Universitas</span>
+                                    <span class="value" id="profile-univ">-</span>
+                                </div>
+                            </div>
+                            <div class="profile-detail-item">
+                                <i class="fas fa-phone"></i>
+                                <div>
+                                    <span class="label">No. HP</span>
+                                    <span class="value" id="profile-hp">-</span>
+                                </div>
+                            </div>
+                            <div class="profile-detail-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <div>
+                                    <span class="label">Alamat</span>
+                                    <span class="value" id="profile-alamat">-</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-danger btn-full" onclick="confirmLogout()">
+                            <i class="fas fa-sign-out-alt"></i> Keluar dari Akun
+                        </button>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Bottom Navigation -->
+            <nav class="bottom-nav">
+                <a href="#" class="nav-item active" data-section="beranda" onclick="showMahasiswaSection('beranda')">
+                    <i class="fas fa-home"></i>
+                    <span>Beranda</span>
+                </a>
+                <a href="#" class="nav-item" data-section="ajukan" onclick="showMahasiswaSection('ajukan')">
+                    <i class="fas fa-plus-circle"></i>
+                    <span>Ajukan</span>
+                </a>
+                <a href="#" class="nav-item" data-section="riwayat" onclick="showMahasiswaSection('riwayat')">
+                    <i class="fas fa-history"></i>
+                    <span>Riwayat</span>
+                </a>
+                <a href="#" class="nav-item" data-section="profil" onclick="showMahasiswaSection('profil')">
+                    <i class="fas fa-user"></i>
+                    <span>Profil</span>
+                </a>
+            </nav>
+        </div>
+
+        <!-- ===============================================
+             ADMIN DASHBOARD
+             =============================================== -->
+        <div id="page-admin" class="page dashboard-page admin-page hidden">
+            <!-- Header -->
+            <header class="dashboard-header admin-header">
+                <h1><i class="fas fa-landmark"></i> SIMARAJA</h1>
+                <div class="header-actions">
+                    <button class="notif-btn" onclick="showToast('Fitur notifikasi', 'info')">
+                        <i class="fas fa-bell"></i>
+                        <span class="notif-badge" id="admin-notif-badge">0</span>
+                    </button>
+                    <button class="user-menu-btn" onclick="toggleAdminMenu()">
+                        <div class="user-avatar-small admin">
+                            <i class="fas fa-user-shield"></i>
+                        </div>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Admin Dropdown Menu -->
+            <div class="user-dropdown" id="admin-dropdown">
+                <div class="dropdown-header">
+                    <div class="dropdown-avatar admin">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                    <div>
+                        <h4>Administrator</h4>
+                        <p>Pemerintah Raja Ampat</p>
+                    </div>
+                </div>
+                <div class="dropdown-menu">
+                    <a href="#" onclick="confirmLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Keluar
+                    </a>
+                </div>
+            </div>
+
+            <!-- Main Content -->
+            <main class="dashboard-main">
+                <!-- Dashboard Section -->
+                <section id="admin-dashboard" class="dashboard-section">
+                    <div class="admin-welcome">
+                        <h2>Selamat Datang, Administrator</h2>
+                        <p>Kelola pengajuan bantuan mahasiswa Raja Ampat</p>
+                    </div>
+
+                    <!-- Stats Cards -->
+                    <div class="admin-stats-grid">
+                        <div class="admin-stat-card pending">
+                            <div class="stat-card-header">
+                                <i class="fas fa-clock"></i>
+                                <span>Pending</span>
+                            </div>
+                            <div class="stat-card-value" id="admin-pending">0</div>
+                        </div>
+                        <div class="admin-stat-card diproses">
+                            <div class="stat-card-header">
+                                <i class="fas fa-spinner"></i>
+                                <span>Diproses</span>
+                            </div>
+                            <div class="stat-card-value" id="admin-diproses">0</div>
+                        </div>
+                        <div class="admin-stat-card disetujui">
+                            <div class="stat-card-header">
+                                <i class="fas fa-check-circle"></i>
+                                <span>Disetujui</span>
+                            </div>
+                            <div class="stat-card-value" id="admin-disetujui">0</div>
+                        </div>
+                        <div class="admin-stat-card ditolak">
+                            <div class="stat-card-header">
+                                <i class="fas fa-times-circle"></i>
+                                <span>Ditolak</span>
+                            </div>
+                            <div class="stat-card-value" id="admin-ditolak">0</div>
+                        </div>
+                    </div>
+
+                    <!-- Total Dana -->
+                    <div class="total-dana-card">
+                        <i class="fas fa-wallet"></i>
+                        <div>
+                            <span class="dana-label">Total Dana Disetujui</span>
+                            <span class="dana-value" id="total-dana-disetujui">Rp 0</span>
+                        </div>
+                    </div>
+
+                    <!-- Recent Proposals -->
+                    <div class="recent-proposals">
+                        <div class="section-header-row">
+                            <h3>Pengajuan Terbaru</h3>
+                            <a href="#" onclick="showAdminSection('pengajuan')" class="view-all">Lihat Semua</a>
+                        </div>
+                        <div id="recent-proposals-list">
+                            <!-- Populated by JS -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Pengajuan Section -->
+                <section id="admin-pengajuan" class="dashboard-section hidden">
+                    <div class="section-title">
+                        <button class="back-section-btn" onclick="showAdminSection('dashboard')">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <h2>Daftar Pengajuan</h2>
+                    </div>
+
+                    <!-- Filter Tabs -->
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-filter="semua" onclick="filterPengajuan('semua')">Semua</button>
+                        <button class="filter-tab" data-filter="pending" onclick="filterPengajuan('pending')">Pending</button>
+                        <button class="filter-tab" data-filter="diproses" onclick="filterPengajuan('diproses')">Diproses</button>
+                        <button class="filter-tab" data-filter="disetujui" onclick="filterPengajuan('disetujui')">Disetujui</button>
+                        <button class="filter-tab" data-filter="ditolak" onclick="filterPengajuan('ditolak')">Ditolak</button>
+                    </div>
+
+                    <div id="admin-pengajuan-list" class="admin-pengajuan-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </section>
+
+                <!-- Detail Pengajuan Section -->
+                <section id="admin-detail" class="dashboard-section hidden">
+                    <div class="section-title">
+                        <button class="back-section-btn" onclick="showAdminSection('pengajuan')">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <h2>Detail Pengajuan</h2>
+                    </div>
+
+                    <div id="detail-container">
+                        <!-- Populated by JS -->
+                    </div>
+                </section>
+
+                <!-- Mahasiswa Section -->
+                <section id="admin-mahasiswa" class="dashboard-section hidden">
+                    <div class="section-title">
+                        <button class="back-section-btn" onclick="showAdminSection('dashboard')">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <h2>Data Mahasiswa</h2>
+                    </div>
+
+                    <div class="search-container">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="search-mahasiswa" placeholder="Cari nama atau NIM..." oninput="searchMahasiswa()">
+                    </div>
+
+                    <div id="admin-mahasiswa-list" class="admin-mahasiswa-list">
+                        <!-- Populated by JS -->
+                    </div>
+                </section>
+            </main>
+
+            <!-- Bottom Navigation -->
+            <nav class="bottom-nav admin-nav">
+                <a href="#" class="nav-item active" data-section="dashboard" onclick="showAdminSection('dashboard')">
+                    <i class="fas fa-home"></i>
+                    <span>Dashboard</span>
+                </a>
+                <a href="#" class="nav-item" data-section="pengajuan" onclick="showAdminSection('pengajuan')">
+                    <i class="fas fa-file-alt"></i>
+                    <span>Pengajuan</span>
+                </a>
+                <a href="#" class="nav-item" data-section="mahasiswa" onclick="showAdminSection('mahasiswa')">
+                    <i class="fas fa-users"></i>
+                    <span>Mahasiswa</span>
+                </a>
+            </nav>
+        </div>
+
+    </div>
+
+    <!-- ===============================================
+         MODAL
+         =============================================== -->
+    <div id="modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Konfirmasi</h3>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <p id="modal-message">Apakah Anda yakin?</p>
+            </div>
+            <div class="modal-footer" id="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
+                <button class="btn btn-primary" id="modal-confirm">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===============================================
+         PDF VIEWER MODAL
+         =============================================== -->
+    <div id="pdf-modal" class="modal hidden">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3 id="pdf-title">Lihat Dokumen</h3>
+                <button class="modal-close" onclick="closePdfModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body pdf-body">
+                <iframe id="pdf-viewer" src=""></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===============================================
+         TOAST CONTAINER
+         =============================================== -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- ===============================================
+         JAVASCRIPT FILES
+         =============================================== -->
+    <script src="./config/config.js"></script>
+    <script src="./js/api.js"></script>
+    <script src="./js/auth.js"></script>
+    <script src="./js/dashboard.js"></script>
+    <script src="./js/script.js"></script>
+</body>
+</html>

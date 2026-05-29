@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Verifikasi Pengajuan - SIMARAJA">
+    <title>Verifikasi Pengajuan - SIMARAJA</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/dashboard.css">
+    <link rel="stylesheet" href="/css/animation.css">
+    <link rel="stylesheet" href="/css/responsive.css">
+</head>
+<body>
+    <!-- Dashboard Page -->
+    <div class="dashboard-page admin-page">
+        <!-- Header -->
+        <header class="dashboard-header admin-header">
+            <h1><i class="fas fa-landmark"></i> SIMARAJA</h1>
+            <div class="header-actions">
+                <button class="user-menu-btn" onclick="toggleAdminMenu()">
+                    <div class="user-avatar-small admin">
+                        <i class="fas fa-user-shield"></i>
+                    </div>
+                </button>
+            </div>
+        </header>
+
+        <!-- Admin Dropdown Menu -->
+        <div class="user-dropdown" id="admin-dropdown">
+            <div class="dropdown-header">
+                <div class="dropdown-avatar admin">
+                    <i class="fas fa-user-shield"></i>
+                </div>
+                <div>
+                    <h4>Administrator</h4>
+                    <p>Pemerintah Raja Ampat</p>
+                </div>
+            </div>
+            <div class="dropdown-menu">
+                <a href="#" onclick="confirmLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Keluar
+                </a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <section class="dashboard-section">
+                <div class="section-title">
+                    <button class="back-section-btn" onclick="window.location.href='/pages/pemerintah/dashboard-admin.html'">
+                        <i class="fas fa-arrow-left"></i>
+                    </button>
+                    <h2>Daftar Pengajuan</h2>
+                </div>
+
+                <!-- Filter Tabs -->
+                <div class="filter-tabs">
+                    <button class="filter-tab active" data-filter="semua" onclick="filterPengajuan('semua')">Semua</button>
+                    <button class="filter-tab" data-filter="pending" onclick="filterPengajuan('pending')">Pending</button>
+                    <button class="filter-tab" data-filter="diproses" onclick="filterPengajuan('diproses')">Diproses</button>
+                    <button class="filter-tab" data-filter="disetujui" onclick="filterPengajuan('disetujui')">Disetujui</button>
+                    <button class="filter-tab" data-filter="ditolak" onclick="filterPengajuan('ditolak')">Ditolak</button>
+                </div>
+
+                <div id="admin-pengajuan-list" class="admin-pengajuan-list">
+                    <!-- Populated by JS -->
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav admin-nav">
+            <a href="/pages/pemerintah/dashboard-admin.html" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="/pages/pemerintah/verifikasi.html" class="nav-item active">
+                <i class="fas fa-file-alt"></i>
+                <span>Pengajuan</span>
+            </a>
+            <a href="/pages/pemerintah/laporan.html" class="nav-item">
+                <i class="fas fa-users"></i>
+                <span>Mahasiswa</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+    
+    <!-- Modal -->
+    <div id="modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modal-title">Konfirmasi</h3>
+                <button class="modal-close" onclick="closeModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body" id="modal-body">
+                <p id="modal-message">Apakah Anda yakin?</p>
+            </div>
+            <div class="modal-footer" id="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal()">Batal</button>
+                <button class="btn btn-primary" id="modal-confirm">Ya, Lanjutkan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PDF Viewer Modal -->
+    <div id="pdf-modal" class="modal hidden">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3 id="pdf-title">Lihat Dokumen</h3>
+                <button class="modal-close" onclick="closePdfModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body pdf-body">
+                <iframe id="pdf-viewer" src=""></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="/js/json-handler.js"></script>
+    <script src="/js/script.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/dashboard.js"></script>
+    
+    <script>
+        // Check login status
+        let currentUser = null;
+        
+        // Initialize
+        function init() {
+            const userData = localStorage.getItem('simaraja_current_user');
+            if (userData) {
+                currentUser = JSON.parse(userData);
+            }
+            
+            if (!currentUser || currentUser.role !== 'admin') {
+                window.location.href = '/pages/auth/login-pemerintah.html';
+                return;
+            }
+            
+            loadPengajuan();
+        }
+        
+        // Load pengajuan
+        function loadPengajuan(filter = 'semua') {
+            const container = document.getElementById('admin-pengajuan-list');
+            let pengajuanData = JSON.parse(localStorage.getItem('simaraja_pengajuan') || '[]');
+            const users = JSON.parse(localStorage.getItem('simaraja_users') || '[]');
+            
+            if (filter !== 'semua') {
+                pengajuanData = pengajuanData.filter(p => p.status === filter);
+            }
+            
+            pengajuanData.sort((a, b) => new Date(b.tanggal) - new Date(a.tanggal));
+            
+            if (pengajuanData.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-inbox"></i>
+                        <p>Tidak ada pengajuan</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = pengajuanData.map(item => {
+                const user = users.find(u => u.id === item.userId);
+                const userInitial = user ? user.nama.charAt(0).toUpperCase() : '?';
+                
+                return `
+                    <div class="pengajuan-card" id="pengajuan-${item.id}">
+                        <div class="pengajuan-header" onclick="togglePengajuanCard(${item.id})">
+                            <div class="pengajuan-user">
+                                <div class="pengajuan-avatar">${userInitial}</div>
+                                <div class="pengajuan-user-info">
+                                    <h4>${user ? user.nama : 'Unknown'}</h4>
+                                    <p>${formatDate(item.tanggal)} - ${formatCurrency(item.dana)}</p>
+                                </div>
+                            </div>
+                            <div class="pengajuan-meta">
+                                <span class="status-badge status-${item.status}">
+                                    ${capitalizeFirst(item.status)}
+                                </span>
+                                <i class="fas fa-chevron-down"></i>
+                            </div>
+                        </div>
+                        <div class="pengajuan-body">
+                            <div class="pengajuan-details">
+                                <div class="pengajuan-detail-item">
+                                    <span>NIM</span>
+                                    <strong>${user ? user.nim : '-'}</strong>
+                                </div>
+                                <div class="pengajuan-detail-item">
+                                    <span>Jurusan</span>
+                                    <strong>${user ? user.jurusan : '-'}</strong>
+                                </div>
+                                <div class="pengajuan-detail-item">
+                                    <span>Universitas</span>
+                                    <strong>${user ? user.universitas : '-'}</strong>
+                                </div>
+                                <div class="pengajuan-detail-item">
+                                    <span>IPK / Semester</span>
+                                    <strong>${item.ipk.toFixed(2)} / ${item.semester}</strong>
+                                </div>
+                            </div>
+                            
+                            ${item.dokumen ? `
+                            <div class="proposal-docs">
+                                <div class="proposal-docs-title">Dokumen Proposal:</div>
+                                <div class="proposal-doc-list">
+                                    ${item.dokumen.proposal?.data ? `
+                                    <button class="proposal-doc-btn" onclick="viewPdf('${item.dokumen.proposal.data}', 'Proposal')">
+                                        <i class="fas fa-file-pdf"></i> Lihat Proposal
+                                    </button>
+                                    ` : ''}
+                                    ${item.dokumen.transkrip?.data ? `
+                                    <button class="proposal-doc-btn" onclick="viewPdf('${item.dokumen.transkrip.data}', 'Transkrip')">
+                                        <i class="fas fa-file-pdf"></i> Lihat Transkrip
+                                    </button>
+                                    ` : ''}
+                                    ${item.dokumen.ktm?.data ? `
+                                    <button class="proposal-doc-btn" onclick="viewPdf('${item.dokumen.ktm.data}', 'KTM/KTP')">
+                                        <i class="fas fa-file-pdf"></i> Lihat KTM/KTP
+                                    </button>
+                                    ` : ''}
+                                </div>
+                            </div>
+                            ` : ''}
+                            
+                            ${item.status === 'pending' || item.status === 'diproses' ? `
+                            <div class="pengajuan-actions">
+                                ${item.status === 'pending' ? `
+                                <button class="btn btn-process" onclick="processPengajuan(${item.id})">
+                                    <i class="fas fa-spinner"></i> Proses
+                                </button>
+                                ` : ''}
+                                <button class="btn btn-approve" onclick="approvePengajuan(${item.id})">
+                                    <i class="fas fa-check"></i> Setujui
+                                </button>
+                                <button class="btn btn-reject" onclick="rejectPengajuan(${item.id})">
+                                    <i class="fas fa-times"></i> Tolak
+                                </button>
+                            </div>
+                            ` : ''}
+                            
+                            ${item.catatan ? `
+                            <div class="riwayat-catatan" style="margin-top: 1rem;">
+                                <strong>Catatan:</strong> ${item.catatan}
+                            </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        // Filter pengajuan
+        function filterPengajuan(filter) {
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.classList.remove('active');
+                if (tab.dataset.filter === filter) {
+                    tab.classList.add('active');
+                }
+            });
+            loadPengajuan(filter);
+        }
+        
+        // Toggle pengajuan card
+        function togglePengajuanCard(id) {
+            document.getElementById('pengajuan-' + id).classList.toggle('expanded');
+        }
+        
+        // Process pengajuan
+        function processPengajuan(id) {
+            const pengajuanList = JSON.parse(localStorage.getItem('simaraja_pengajuan') || '[]');
+            const index = pengajuanList.findIndex(p => p.id === id);
+            if (index !== -1) {
+                pengajuanList[index].status = 'diproses';
+                localStorage.setItem('simaraja_pengajuan', JSON.stringify(pengajuanList));
+                loadPengajuan();
+                showToast('Pengajuan sedang diproses!', 'info');
+            }
+        }
+        
+        // Approve pengajuan
+        function approvePengajuan(id) {
+            const pengajuanList = JSON.parse(localStorage.getItem('simaraja_pengajuan') || '[]');
+            const index = pengajuanList.findIndex(p => p.id === id);
+            if (index !== -1) {
+                pengajuanList[index].status = 'disetujui';
+                pengajuanList[index].catatan = 'Pengajuan telah disetujui. Silakan mengurus administrasi selanjutnya di kantor Dinas Pendidikan Raja Ampat.';
+                localStorage.setItem('simaraja_pengajuan', JSON.stringify(pengajuanList));
+                loadPengajuan();
+                showToast('Pengajuan telah disetujui!', 'success');
+            }
+        }
+        
+        // Reject pengajuan
+        function rejectPengajuan(id) {
+            const catatan = prompt('Masukkan alasan penolakan:');
+            if (catatan) {
+                const pengajuanList = JSON.parse(localStorage.getItem('simaraja_pengajuan') || '[]');
+                const index = pengajuanList.findIndex(p => p.id === id);
+                if (index !== -1) {
+                    pengajuanList[index].status = 'ditolak';
+                    pengajuanList[index].catatan = catatan;
+                    localStorage.setItem('simaraja_pengajuan', JSON.stringify(pengajuanList));
+                    loadPengajuan();
+                    showToast('Pengajuan telah ditolak!', 'warning');
+                }
+            }
+        }
+        
+        // View PDF
+        function viewPdf(base64Data, title) {
+            document.getElementById('pdf-title').textContent = 'Lihat ' + title;
+            document.getElementById('pdf-viewer').src = base64Data;
+            document.getElementById('pdf-modal').classList.remove('hidden');
+        }
+        
+        // Close PDF modal
+        function closePdfModal() {
+            document.getElementById('pdf-modal').classList.add('hidden');
+            document.getElementById('pdf-viewer').src = '';
+        }
+        
+        // Admin menu toggle
+        function toggleAdminMenu() {
+            document.getElementById('admin-dropdown').classList.toggle('active');
+        }
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.user-menu-btn') && !e.target.closest('#admin-dropdown')) {
+                document.getElementById('admin-dropdown').classList.remove('active');
+            }
+        });
+        
+        // Logout
+        function confirmLogout() {
+            showModal('Konfirmasi Keluar', 'Apakah Anda yakin ingin keluar dari akun?', function() {
+                localStorage.removeItem('simaraja_current_user');
+                window.location.href = '/';
+            });
+        }
+        
+        // Modal functions
+        function showModal(title, message, onConfirm) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').textContent = message;
+            document.getElementById('modal').classList.remove('hidden');
+            document.getElementById('modal-confirm').onclick = onConfirm;
+        }
+        
+        function closeModal() {
+            document.getElementById('modal').classList.add('hidden');
+        }
+        
+        // Format helpers
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(amount);
+        }
+        
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+        }
+        
+        function capitalizeFirst(str) {
+            return str.charAt(0).toUpperCase() + str.slice(1);
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
